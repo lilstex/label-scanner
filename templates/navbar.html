@@ -1,0 +1,59 @@
+{% load static %}
+<header class="header header--loggedIn">
+    <div class="container">
+        <a href="{% url 'home' %}" class="header__logo">
+            <img src="https://images-platform.99static.com//0BuqJaQ29WbpvIF2voPFwnaQI3c=/176x188:1070x1082/fit-in/500x500/99designs-contests-attachments/48/48136/attachment_48136383" />
+            <h1>Orion Label Scanner</h1>
+        </a>
+        <form class="header__search" method="GET" action="{% url 'home' %}">
+            <label>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                    <title>search</title>
+                    <path
+                        d="M32 30.586l-10.845-10.845c1.771-2.092 2.845-4.791 2.845-7.741 0-6.617-5.383-12-12-12s-12 5.383-12 12c0 6.617 5.383 12 12 12 2.949 0 5.649-1.074 7.741-2.845l10.845 10.845 1.414-1.414zM12 22c-5.514 0-10-4.486-10-10s4.486-10 10-10c5.514 0 10 4.486 10 10s-4.486 10-10 10z">
+                    </path>
+                </svg>
+                <input name="q" placeholder="Search for labels" />
+            </label>
+        </form>
+        <nav class="header__menu">
+
+
+            <!-- Logged In -->
+            {% if request.user.is_authenticated %}
+            <div class="header__user">
+                <a href="#">
+                    <p><span>{{request.user.email}}</span></p>
+                </a>
+                <button class="dropdown-button">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <title>Look Down</title>
+                        <path d="M16 21l-13-13h-3l16 16 16-16h-3l-13 13z"></path>
+                    </svg>
+                </button>
+            </div>
+            {% else %}
+
+            <!-- Not Logged In -->
+            <a href="{% url 'login' %}">
+                <img src="data:image/png;base64,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" />
+                <p>Login</p>
+            </a>
+            {% endif %}
+
+            <div class="dropdown-menu">
+                <a href="{% url 'logout' %}" class="dropdown-link"><svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+                        width="32" height="32" viewBox="0 0 32 32">
+                        <title>log-out</title>
+                        <path
+                            d="M3 0h22c0.553 0 1 0 1 0.553l-0 3.447h-2v-2h-20v28h20v-2h2l0 3.447c0 0.553-0.447 0.553-1 0.553h-22c-0.553 0-1-0.447-1-1v-30c0-0.553 0.447-1 1-1z">
+                        </path>
+                        <path
+                            d="M21.879 21.293l1.414 1.414 6.707-6.707-6.707-6.707-1.414 1.414 4.293 4.293h-14.172v2h14.172l-4.293 4.293z">
+                        </path>
+                    </svg>
+                    Logout</a>
+            </div>
+        </nav>
+    </div>
+</header>
