@@ -1,19 +1,9 @@
-# from django.db import models
-# from django.contrib.auth.models import AbstractUser
-
-# # Create your models here.
-# class User(AbstractUser):
-#     name = models.CharField(max_length=200, null=True)
-#     email = models.EmailField(unique=True, null=True)
-
-#     USERNAME_FIELD = 'email'
-#     REQUIRED_FIELDS = []
-
 import uuid
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.db import models
+from cloudinary.models import CloudinaryField
 
 
 class CustomUserManager(BaseUserManager):
@@ -59,8 +49,9 @@ class User(AbstractUser):
 
 
 class Label(models.Model):
-    image = models.ImageField(null=True)
+    image_url = CloudinaryField('image')
     contents = models.TextField(blank=True)
+    disparity = models.TextField(blank=True, null=True)
     
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

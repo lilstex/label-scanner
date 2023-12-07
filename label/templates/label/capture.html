@@ -13,7 +13,7 @@
       <div class="layout__body">
         <h2 class="auth__tagline">Take a snapshot of a label</h2>
 
-        <form class="form" action="" method="POST" enctype="multipart/form-data">
+        <form class="form" action="{% url 'home' %}" method="POST" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="form__group form__group">
             <label for="room_name">Image</label>

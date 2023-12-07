@@ -1,0 +1,5 @@
+pymysql
+opencv-python
+pytesseract
+requests
+cloudinary
