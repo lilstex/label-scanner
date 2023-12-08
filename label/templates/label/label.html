@@ -15,7 +15,7 @@
         <h5>Labels</h5><hr><br>
         {% for label in labels %}
           <div class="avatar avatar--big">
-            <img src="{{ label.image }}" />
+            <img src="{{ label.image_url }}" />
           </div><br>
         {% endfor %}
       </div>
@@ -74,13 +74,15 @@
         <h2>Label Contents</h2>
       </div>
 
+      {% if contents %}
       <div class="activities__box">
         <div class="activities__boxContent">
           <div class="activities__boxRoomContent">
-            I’ll have to try this sometime. Really like this idea. Wanna talk about it? I ‘m....
+            {{contents}}
           </div>
         </div>
       </div>
+      {% endif %}
       {% if disparity %}
       <div class="activities__header">
         <h2>Label Disparities</h2>
@@ -90,6 +92,18 @@
         <div class="activities__boxContent">
           <div class="activities__boxRoomContent">
             {{disparity}}
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="activities__header">
+        <h2>Label Disparities</h2>
+      </div>
+
+      <div class="activities__box">
+        <div class="activities__boxContent">
+          <div class="activities__boxRoomContent">
+            No disparity. The label contents are the same.
           </div>
         </div>
       </div>

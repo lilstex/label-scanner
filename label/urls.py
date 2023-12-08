@@ -8,5 +8,5 @@ urlpatterns = [
 
     path('', views.home, name="home"),
     path('capture-label/', views.capture_label, name="captureLabel"),
-    path('/label', views.label, name="label"),
+    path('label/', views.label, name="label"),
 ]

@@ -15,7 +15,7 @@
         <h5>Labels</h5><hr><br>
         {% for label in labels %}
           <div class="avatar avatar--big">
-            <img src="{{ label.image }}" />
+            <img src="{{ label.image_url }}" />
           </div><br>
         {% endfor %}
       </div>
@@ -70,17 +70,6 @@
 
     <!-- Activities Start -->
     <div class="activities">
-      <div class="activities__header">
-        <h2>Label Contents</h2>
-      </div>
-
-      <div class="activities__box">
-        <div class="activities__boxContent">
-          <div class="activities__boxRoomContent">
-            I’ll have to try this sometime. Really like this idea. Wanna talk about it? I ‘m....
-          </div>
-        </div>
-      </div>
       {% if disparity %}
       <div class="activities__header">
         <h2>Label Disparities</h2>
