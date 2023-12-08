@@ -1,4 +1,6 @@
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,12 +10,15 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
+# Load environment variables from .env
+load_dotenv()
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-o*f3)8$82@*3l@8a=ezo6cmqo4gtz6xm*z&0i6vzv!23=y@^1v'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -76,11 +81,11 @@ WSGI_APPLICATION = 'orion.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'orion_label',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',  # localhost if using the same server
-        'PORT': '3306',  # default 3306
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASS'),
+        'HOST': os.environ.get('DB_HOST'), 
+        'PORT': os.environ.get('DB_PORT'), 
     }
 }
 
@@ -137,7 +142,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Cloudinary Integration
 cloudinary.config(
-    cloud_name = "lilstex",
-    api_key = "816955559578951",
-    api_secret = "E5YZi-7JFdsUAYPL8eyo--32Egc"
+    cloud_name = os.environ.get('CLOUD_NAME'),
+    api_key = os.environ.get('CLOUD_API_KEY'),
+    api_secret = os.environ.get('CLOUD_API_SECRET')
 )
