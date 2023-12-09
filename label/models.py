@@ -51,6 +51,7 @@ class User(AbstractUser):
 class Label(models.Model):
     image_url = models.CharField(max_length=200, null=True)
     contents = models.TextField(blank=True)
+    compare = models.TextField(blank=True)
     # disparity = models.TextField(blank=True, null=True)
     
     updated = models.DateTimeField(auto_now=True)

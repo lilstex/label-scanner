@@ -8,6 +8,61 @@ import cloudinary
 from cloudinary import uploader
 
 # Custom functions
+
+def load_image(image_path):
+    response = requests.get(image_path)
+    if response.status_code == 200:
+        image_bytes = response.content
+        image_array = np.frombuffer(image_bytes, dtype=np.uint8)
+        return cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+    else:
+        print('Error downloading image')
+        return None
+
+
+def extract_text_to_compare(img_rgb, cv_img):
+    text_arr = []
+
+    # Working with image to data
+    data = pytesseract.image_to_data(img_rgb)
+    for id, line in enumerate(data.splitlines()):
+        if id != 0 and len(line.split()) == 12:  # Eliminate the first row and check length
+            x, y, w, h = map(int, line.split()[6:10])
+            cv2.rectangle(cv_img, (x, y), (w + x, h + y), (0, 255, 0), 2)
+            cv2.putText(cv_img, line.split()[11], (x, y), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0), 1)
+            text_arr.append(line.split()[11])
+
+    return text_arr
+
+
+def extract_text(img_rgb, config="--psm 6"):
+    # Check if img_rgb is a valid NumPy array
+    if not isinstance(img_rgb, np.ndarray):
+        raise TypeError("`img_rgb` must be a NumPy array")
+
+    # Preprocess the image for better accuracy
+    try:
+        img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
+    except cv2.error as e:
+        print(f"Error during grayscale conversion: {e}")
+        return []
+
+    img_blur = cv2.GaussianBlur(img_gray, (5, 5), 0)
+    img_thresh = cv2.threshold(img_blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+
+    # Extract text using Tesseract
+    try:
+        text = pytesseract.image_to_string(img_thresh, config=config)
+    except Exception as e:
+        print(f"Error during Tesseract processing: {e}")
+        return []
+
+    lines = text.splitlines()
+
+    # Filter empty lines and return list
+    return [line for line in lines if line.strip()]
+
+
 def find_matching_image_url(input_image_url, labels):
     if not labels:
         return None
@@ -60,7 +115,7 @@ def find_matching_image_url(input_image_url, labels):
         matches = flann.knnMatch(desc_input, desc_compare, k=2)
 
         # Apply the ratio test to get good matches
-        good_matches = [m for m, n in matches if m.distance < 0.75 * n.distance]
+        good_matches = [m for m, n in matches if m.distance < 0.95 * n.distance]
 
         # Calculate the match percentage
         match_percentage = len(good_matches) / len(kp_input) * 100
@@ -69,9 +124,9 @@ def find_matching_image_url(input_image_url, labels):
         if match_percentage > best_match_percentage:
             best_match_percentage = match_percentage
             best_match_url = label.image_url
-
+    print(best_match_percentage)
     # Check if the best match percentage is greater than 75
-    if best_match_percentage >= 75:
+    if best_match_percentage >= .0:
         return best_match_url
     else:
         return None
@@ -85,41 +140,17 @@ def extract_text_from_image(image_path):
         # Convert from BGR to RGB format/mode
         img_rgb = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
 
-        text_arr = extract_text(img_rgb, cv_img)
+        text_arr_to_compare = extract_text_to_compare(img_rgb, cv_img)
+        text_arr = extract_text(img_rgb)
 
         # Stringify the extracted texts
+        text_str_compare = '\n'.join(text_arr_to_compare)
         text_str = '\n'.join(text_arr)
 
-        return text_str
+        return text_str, text_str_compare
     else:
         print('Error processing image')
         return None
-
-
-def load_image(image_path):
-    response = requests.get(image_path)
-    if response.status_code == 200:
-        image_bytes = response.content
-        image_array = np.frombuffer(image_bytes, dtype=np.uint8)
-        return cv2.imdecode(image_array, cv2.IMREAD_COLOR)
-    else:
-        print('Error downloading image')
-        return None
-
-
-def extract_text(img_rgb, cv_img):
-    text_arr = []
-
-    # Working with image to data
-    data = pytesseract.image_to_data(img_rgb)
-    for id, line in enumerate(data.splitlines()):
-        if id != 0 and len(line.split()) == 12:  # Eliminate the first row and check length
-            x, y, w, h = map(int, line.split()[6:10])
-            cv2.rectangle(cv_img, (x, y), (w + x, h + y), (0, 255, 0), 2)
-            cv2.putText(cv_img, line.split()[11], (x, y), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0), 1)
-            text_arr.append(line.split()[11])
-
-    return text_arr
 
 
 def compare_texts(text1, text2):
@@ -148,6 +179,7 @@ def upload_to_cloudinary(image):
     public_url = upload_result['url']
 
     return public_url
+
 
 def delete_from_cloudinary(image_url):
     # Extract the public ID from the image URL

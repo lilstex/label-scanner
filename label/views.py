@@ -80,19 +80,22 @@ def label(request):
     labels = Label.objects.all()
     label_count = labels.count()
     if request.method == 'POST':
-        image = request.FILES.get('image')  
+        image = request.FILES.get('image')
+        if not image:
+            image = request.POST.get('image')
+       
         # Upload image to cloudinary
         public_url = process.upload_to_cloudinary(image)
 
         # Compare the images
         matching_image_url = process.find_matching_image_url(public_url, labels)
         # Extract the texts of the new label
-        contents = process.extract_text_from_image(public_url)
+        contents, compare = process.extract_text_from_image(public_url)
 
         if matching_image_url is None:
             notice = 'There is no match for this label. It has been saved successfully.'
             # Save the image url in the database
-            new_object = Label.objects.create(image_url=public_url, contents=contents)
+            new_object = Label.objects.create(image_url=public_url, contents=contents, compare=compare)
 
             if new_object is None:
                 messages.error(request, 'Unable to save label')
@@ -105,7 +108,7 @@ def label(request):
             label = Label.objects.get(image_url=matching_image_url)
 
             # Compare contents of the two matching labels 
-            text_arr = process.compare_texts(label.contents, contents)
+            text_arr = process.compare_texts(label.compare, compare)
             
             context = {'labels': labels, 'label_count': label_count, 'disparity': text_arr, 'matchLabel': label.image_url, 'newLabel': public_url, 'contents': label.contents}
 
@@ -117,5 +120,9 @@ def label(request):
 
 @login_required(login_url='login')
 def capture_label(request):
+    return render(request, 'label/capture.html')
+
+@login_required(login_url='login')
+def upload_label(request):
     return render(request, 'label/upload.html')
 

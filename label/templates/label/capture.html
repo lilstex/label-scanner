@@ -4,8 +4,8 @@
 <main class="auth layout">
 
   <div class="container">
-    <div class="layout__box">
-      <div class="layout__boxHeader">
+    <div class="layout__box_c">
+      <div class="layout__boxHeader_c">
         <div class="layout__boxTitle">
           <h3>Capture Label</h3>
         </div>
@@ -13,7 +13,7 @@
       <div class="layout__body">
         <h2 class="auth__tagline">Take a snapshot of a label</h2>
 
-        <form class="form" action="{% url 'home' %}" method="POST" enctype="multipart/form-data">
+        <form class="form" action="{% url 'label' %}" method="POST" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="form__group form__group">
             <label for="room_name">Image</label>
