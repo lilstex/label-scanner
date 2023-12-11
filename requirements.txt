@@ -1,6 +1,8 @@
+django
 pymysql
 opencv-python
 pytesseract
 requests
 cloudinary
 python-dotenv
+cryptography
